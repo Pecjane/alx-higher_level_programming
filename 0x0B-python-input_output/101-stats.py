@@ -5,22 +5,39 @@ A script that reads stdin line by line and computes metrics.
 """
 
 if __name__ == "__main__":
-    n = 0
+    import sys
+
     size = 0
-    status = []
+    status_codes = {}
+    valid_codes = ['200', '301', '400', '401', '403', '404', '405', '500']
+    count = 0
+
     try:
-        while True:
-            stdin = input()
-            lis = stdin.split()
-            n += 1
-            size += int(lis[-1])
-            status.append(lis[-2])
-            status = [i for i in status if i]
-            if n % 10 == 0:
-                print(f"File size: {size}")
-                for i in sorted(set(status)):
-                    print(f"{i}: {status.count(i)}")
+        for line in sys.stdin:
+            if count == 10:
+                print_stats(size, status_codes)
+                count = 1
+            else:
+                count += 1
+
+            line = line.split()
+
+            try:
+                size += int(line[-1])
+            except (IndexError, ValueError):
+                pass
+
+            try:
+                if line[-2] in valid_codes:
+                    if status_codes.get(line[-2], -1) == -1:
+                        status_codes[line[-2]] = 1
+                    else:
+                        status_codes[line[-2]] += 1
+            except IndexError:
+                pass
+
+        print_stats(size, status_codes)
+
     except KeyboardInterrupt:
-        print(f"File size: {size}")
-        for i in sorted(set(status)):
-            print(f"{i}: {status.count(i)}")
+        print_stats(size, status_codes)
+        raise
