@@ -1,7 +1,8 @@
 #!/usr/bin/node
 
-/*If the argument can’t be converted to an integer, print “Not a number”
- *My number: <first argument converted in integer>
+/*
+ * prints My number: <first argument converted in integer>
+ * if the first argument can be converted to an integer
  * else prints "Not a number".
  */
 
